@@ -421,67 +421,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 
 <div style="
   font-family: system-ui, sans-serif;
-  font-size: 15px;
-  color: #555;
+  font-size: 20px;
+  color: #111;
   margin-top: 20px;
   text-align: center;
 ">
   Total unique visitors:
-
-  <a href="https://abhishekkumawat001.goatcounter.com"
-     target="_blank"
-     style="text-decoration:none; color:inherit;">
-
-    <!-- This is the GoatCounter SVG that displays the actual number -->
-    <img
-      src="https://abhishekkumawat001.goatcounter.com/counter//.svg"
-      alt="Visitor count"
-      style="
-        height: 22px;
-        vertical-align: middle;
-        margin-left: 6px;
-      "
-    />
-
-  </a>
+  <!-- 
+    This image directly requests your total count from GoatCounter.
+    For this image to render a number instead of breaking, you MUST enable 
+    "Allow public viewing of site statistics" in your GoatCounter Site Settings.
+  -->
+  <img
+    src="https://abhishekkumawat001.goatcounter.com/counter//.svg"
+    alt="Visitor count"
+    style="height: 22px; vertical-align: middle; margin-left: 6px;"
+  />
 </div>
 
-<div style="
-  font-family: system-ui, sans-serif;
-  font-size: 20px;
-  color: #111;
-  margin-top: 20px;
-">
-  Total unique visitors:
-  <span id="visitor-count">0</span>
-</div>
-
-<script>
-async function loadVisitorCount() {
-
-  try {
-
-    const response = await fetch(
-      "https://abhishekkumawat001.goatcounter.com/api/v0/stats/total",
-      {
-        headers: {
-          "Authorization": "lq3641hxt11x1hn1nicx63zvd16itjccz3dry89tt7zdyijrs4"
-        }
-      }
-    );
-
-    const data = await response.json();
-
-    document.getElementById("visitor-count").textContent =
-      data.total_visitors || 0;
-
-  } catch (error) {
-
-    console.error(error);
-  }
-}
-
-loadVisitorCount();
-</script>
 </body>
 </html>
