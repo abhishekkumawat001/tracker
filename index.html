@@ -446,5 +446,42 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </a>
 </div>
 
+<div style="
+  font-family: system-ui, sans-serif;
+  font-size: 20px;
+  color: #111;
+  margin-top: 20px;
+">
+  Total unique visitors:
+  <span id="visitor-count">0</span>
+</div>
+
+<script>
+async function loadVisitorCount() {
+
+  try {
+
+    const response = await fetch(
+      "https://abhishekkumawat001.goatcounter.com/api/v0/stats/total",
+      {
+        headers: {
+          "Authorization": "lq3641hxt11x1hn1nicx63zvd16itjccz3dry89tt7zdyijrs4"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("visitor-count").textContent =
+      data.total_visitors || 0;
+
+  } catch (error) {
+
+    console.error(error);
+  }
+}
+
+loadVisitorCount();
+</script>
 </body>
 </html>
