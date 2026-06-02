@@ -73,6 +73,7 @@
   .add-btn { padding: 9px 18px; border-radius: 8px; border: none; background: #1D9E75; color: white; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; transition: background 0.15s; }
   .add-btn:hover { background: #0F6E56; }
   .habit-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #fafaf8; border-radius: 8px; margin-bottom: 7px; border: 1px solid #f0f0f0; }
+  .habit-item.dragging { opacity: 0.6; transform: scale(0.995); border: 1px dashed #d0d0d0; }
   .habit-item-left { display: flex; align-items: center; gap: 10px; }
   .habit-idx { font-size: 11px; color: #bbb; min-width: 22px; font-weight: 500; }
   .habit-item-name { font-size: 13.5px; }
@@ -129,6 +130,8 @@ function App() {
   const [newHabit, setNewHabit] = useState("");
   const chartRef = useRef(null);
   const chartInst = useRef(null);
+  const dragIndexRef = useRef(null);
+  const [draggingId, setDraggingId] = useState(null);
 
   const mkey = `${year}-${month}`;
   const days = getDaysInMonth(year, month);
@@ -229,6 +232,35 @@ function App() {
       setHabits(prev => prev.filter(h => h.id !== id));
     }
   };
+
+  const handleDragStart = (e, idx, id) => {
+    dragIndexRef.current = idx;
+    try { e.dataTransfer.effectAllowed = 'move'; } catch (err) {}
+    setDraggingId(id);
+  };
+
+  const handleDragOver = (e, idx) => {
+    e.preventDefault();
+    try { e.dataTransfer.dropEffect = 'move'; } catch (err) {}
+  };
+
+  const handleDrop = (e, idx) => {
+    e.preventDefault();
+    const from = dragIndexRef.current;
+    const to = idx;
+    if (from === null || from === undefined) { setDraggingId(null); return; }
+    if (from === to) { setDraggingId(null); dragIndexRef.current = null; return; }
+    setHabits(prev => {
+      const next = prev.slice();
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+    setDraggingId(null);
+    dragIndexRef.current = null;
+  };
+
+  const handleDragEnd = () => { setDraggingId(null); dragIndexRef.current = null; };
 
   const pctColor = (pct) => pct >= 80 ? "#1D9E75" : pct >= 50 ? "#BA7517" : "#ccc";
   const isWeekStart = (d) => getDow(year, month, d) === 0 && d > 1;
@@ -396,7 +428,16 @@ function App() {
             <div className="empty-state">No habits yet. Add your first habit above!</div>
           )}
           {habits.map((h,i)=>(
-            <div key={h.id} className="habit-item">
+            <div
+              key={h.id}
+              className={`habit-item${draggingId===h.id?" dragging":""}`}
+              draggable
+              onDragStart={(e)=>handleDragStart(e,i,h.id)}
+              onDragOver={(e)=>handleDragOver(e,i)}
+              onDrop={(e)=>handleDrop(e,i)}
+              onDragEnd={handleDragEnd}
+              aria-grabbed={draggingId===h.id}
+            >
               <div className="habit-item-left">
                 <span className="habit-idx">#{i+1}</span>
                 <span className="habit-item-name">{h.name}</span>
