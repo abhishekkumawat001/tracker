@@ -11,7 +11,7 @@
 <title>Habit Tracker</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,6 +79,13 @@
   .habit-item-name { font-size: 13.5px; }
   .del-btn { background: none; border: none; cursor: pointer; color: #e24b4a; font-size: 20px; padding: 0 4px; line-height: 1; opacity: 0.7; transition: opacity 0.15s; font-family: inherit; }
   .del-btn:hover { opacity: 1; }
+  .edit-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 15px; padding: 0 4px; line-height: 1; opacity: 0.55; transition: opacity 0.15s; font-family: inherit; }
+  .edit-btn:hover { opacity: 1; color: #1D9E75; }
+  .habit-edit-input { flex: 1; padding: 3px 8px; border: 1.5px solid #1D9E75; border-radius: 6px; font-size: 13.5px; font-family: inherit; color: #1a1a18; outline: none; background: white; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+  .save-btn { background: #1D9E75; border: none; border-radius: 6px; color: white; font-size: 12px; font-family: inherit; padding: 3px 10px; cursor: pointer; font-weight: 500; transition: background 0.15s; }
+  .save-btn:hover { background: #0F6E56; }
+  .cancel-btn { background: none; border: 1px solid #ddd; border-radius: 6px; color: #888; font-size: 12px; font-family: inherit; padding: 3px 8px; cursor: pointer; transition: all 0.15s; }
+  .cancel-btn:hover { border-color: #bbb; color: #555; }
   .empty-state { text-align: center; color: #bbb; padding: 2.5rem; font-size: 14px; }
 
   .footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 24px; }
@@ -93,7 +100,7 @@
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 const { useState, useEffect, useRef } = React;
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -132,6 +139,8 @@ function App() {
   const chartInst = useRef(null);
   const dragIndexRef = useRef(null);
   const [draggingId, setDraggingId] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState("");
 
   const mkey = `${year}-${month}`;
   const days = getDaysInMonth(year, month);
@@ -231,6 +240,15 @@ function App() {
     if (window.confirm("Remove this habit? Your past data for it will be kept.")) {
       setHabits(prev => prev.filter(h => h.id !== id));
     }
+  };
+
+  const startEdit = (h) => { setEditingId(h.id); setEditingName(h.name); };
+  const cancelEdit = () => { setEditingId(null); setEditingName(""); };
+  const saveEdit = () => {
+    if (!editingName.trim()) { cancelEdit(); return; }
+    setHabits(prev => prev.map(h => h.id === editingId ? { ...h, name: editingName.trim() } : h));
+    setEditingId(null);
+    setEditingName("");
   };
 
   const handleDragStart = (e, idx, id) => {
@@ -427,24 +445,50 @@ function App() {
           {habits.length === 0 && (
             <div className="empty-state">No habits yet. Add your first habit above!</div>
           )}
-          {habits.map((h,i)=>(
-            <div
-              key={h.id}
-              className={`habit-item${draggingId===h.id?" dragging":""}`}
-              draggable
-              onDragStart={(e)=>handleDragStart(e,i,h.id)}
-              onDragOver={(e)=>handleDragOver(e,i)}
-              onDrop={(e)=>handleDrop(e,i)}
-              onDragEnd={handleDragEnd}
-              aria-grabbed={draggingId===h.id}
-            >
-              <div className="habit-item-left">
-                <span className="habit-idx">#{i+1}</span>
-                <span className="habit-item-name">{h.name}</span>
+          {habits.map((h,i)=>{
+            const isEditing = editingId === h.id;
+            return (
+              <div
+                key={h.id}
+                className={`habit-item${draggingId===h.id?" dragging":""}`}
+                draggable={!isEditing}
+                onDragStart={!isEditing?(e)=>handleDragStart(e,i,h.id):undefined}
+                onDragOver={!isEditing?(e)=>handleDragOver(e,i):undefined}
+                onDrop={!isEditing?(e)=>handleDrop(e,i):undefined}
+                onDragEnd={!isEditing?handleDragEnd:undefined}
+                aria-grabbed={draggingId===h.id}
+              >
+                <div className="habit-item-left" style={{flex:1,minWidth:0}}>
+                  <span className="habit-idx">#{i+1}</span>
+                  {isEditing ? (
+                    <input
+                      className="habit-edit-input"
+                      value={editingName}
+                      onChange={e=>setEditingName(e.target.value)}
+                      onKeyDown={e=>{ if(e.key==="Enter") saveEdit(); if(e.key==="Escape") cancelEdit(); }}
+                      autoFocus
+                      maxLength={60}
+                    />
+                  ) : (
+                    <span className="habit-item-name" style={{flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</span>
+                  )}
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
+                  {isEditing ? (
+                    <>
+                      <button className="save-btn" onClick={saveEdit}>Save</button>
+                      <button className="cancel-btn" onClick={cancelEdit}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="edit-btn" onClick={()=>startEdit(h)} title="Rename habit">✏</button>
+                      <button className="del-btn" onClick={()=>removeHabit(h.id)} title="Remove habit">×</button>
+                    </>
+                  )}
+                </div>
               </div>
-              <button className="del-btn" onClick={()=>removeHabit(h.id)} title="Remove habit">×</button>
-            </div>
-          ))}
+            );
+          })}
           <div style={{marginTop:20,padding:"12px 14px",background:"#f8f8f5",borderRadius:8,fontSize:12,color:"#888",lineHeight:1.6}}>
             💡 <strong>Tips:</strong> Keep habits specific and binary (done/not done).
             Aim for 5–12 habits. Streak badges 🔥 appear when you complete a habit consecutively.
