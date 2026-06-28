@@ -1,9 +1,16 @@
-<<<<<<< HEAD
-# Habit Quest Tracker
+# HabitQuest Tracker
+
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Platform](https://img.shields.io/badge/platform-web-blue)
+![Storage](https://img.shields.io/badge/storage-localStorage-orange)
+![License](https://img.shields.io/badge/license-open%20source-lightgrey)
 
 A dependency-free habit tracker web app inspired by a spreadsheet-style daily check-in board.
 
-## Features
+> [!NOTE]
+> This app runs entirely in the browser and stores your data locally with `localStorage`.
+
+## ✨ Features
 
 - Monthly habit grid with one checkbox per habit per day
 - Editable habit list with icons and target frequency
@@ -12,10 +19,9 @@ A dependency-free habit tracker web app inspired by a spreadsheet-style daily ch
 - Completed habits, total progress, current streak, and quest score
 - Daily progress trend chart
 - Complete-today and clear-month actions
-- Local browser persistence with `localStorage`
 - JSON import and export for backup
 
-## Run Locally
+## 🚀 Run Locally
 
 Open `index.html` in a browser, or serve the folder with any static file server.
 
@@ -25,46 +31,22 @@ npx serve .
 
 No build step is required.
 
-## Deploy
+## 🌍 Deploy
 
 Deploy the folder as a static site. Good options:
 
-- Netlify: drag this folder into Netlify Drop
-- Vercel: import the folder/repo and use the static default
-- GitHub Pages: publish the repository root
+- **Netlify**: drag this folder into Netlify Drop
+- **Vercel**: import the folder/repo and use the static default
+- **GitHub Pages**: publish the repository root
 
-The app stores data in the visitor's browser. For cross-device sync, add a backend such as Supabase, Firebase, or your own API.
-=======
-# HabitForge — Daily Habit Tracker
+> [!TIP]
+> The app stores data in the visitor's browser. For cross-device sync, add a backend such as Supabase, Firebase, or your own API.
 
-A lightweight, single-file habit tracker that runs entirely in your browser — no installation, no server, no account required.
+## 📸 Overview
 
-## Overview
+Habit Quest Tracker helps you build and maintain habits with a clean visual calendar, progress stats, and a simple workflow that makes daily check-ins easier.
 
-HabitForge helps you build and maintain daily habits by giving you a clear visual calendar, streak counters, a year-long heatmap, and quick CSV export. Everything runs from a single `habit-tracker.html` file.
-
-## Features
-
-- **Monthly tracker grid** — check off each habit for every day of the month; navigate between months with the arrow controls
-- **Stats dashboard** — at-a-glance cards showing today's completion rate, current streak, best streak, and monthly completion percentage
-- **Progress chart** — a 30-day bar chart (powered by [Chart.js](https://www.chartjs.org/)) showing daily completion percentages
-- **Streaks page** — individual streak cards for every habit with a dot-grid showing the last 21 days
-- **Year heatmap** — GitHub-style activity grid covering the full calendar year
-- **Habit management** — add, edit, and delete habits; pick from 25 built-in emojis per habit
-- **CSV export** — download all check-in data as a CSV file for use in spreadsheets
-- **Dark / light theme** — toggle between themes; defaults to dark
-- **Responsive layout** — collapsible sidebar works on mobile and desktop
-- **Confetti & toasts** — celebratory animation when you complete all habits for the day
-
-## Usage
-
-1. Download or clone this repository.
-2. Open `habit-tracker.html` in any modern web browser.
-3. Start checking off your habits — no build step or internet connection required (fonts and Chart.js are loaded from CDNs on first open).
-
-That's it. There is nothing to install.
-
-## Default Habits
+## 🧩 Default Habits
 
 The app ships with nine starter habits that you can keep, edit, or delete:
 
@@ -80,7 +62,7 @@ The app ships with nine starter habits that you can keep, edit, or delete:
 | 📓 | Goal Journaling |
 | 🚿 | Shower |
 
-## Data Storage
+## 💾 Data Storage
 
 Check-in data is stored in the browser's `sessionStorage`. This means:
 
@@ -90,7 +72,7 @@ Check-in data is stored in the browser's `sessionStorage`. This means:
 
 Use the **Export CSV** option in the sidebar to save a permanent copy of your data before closing.
 
-## Keyboard Shortcuts
+## ⌨️ Keyboard Shortcuts
 
 | Key | Action |
 |-----|--------|
@@ -99,7 +81,7 @@ Use the **Export CSV** option in the sidebar to save a permanent copy of your da
 | `s` | Go to Streaks |
 | `m` | Go to Heatmap |
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Piece | Detail |
 |-------|--------|
@@ -108,11 +90,10 @@ Use the **Export CSV** option in the sidebar to save a permanent copy of your da
 | Fonts | [Inter](https://fonts.google.com/specimen/Inter) & [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) via Google Fonts |
 | Storage | `sessionStorage` (browser-native) |
 
-## Browser Support
+## 🧪 Browser Support
 
 Any modern browser that supports CSS custom properties and ES6+ JavaScript — Chrome, Firefox, Safari, and Edge.
 
-## License
+## 📄 License
 
 This project is open source. Feel free to fork and customise it for your own use.
->>>>>>> 82dc5da2f2413498f9a9b2a355e8ea3974c2ae4e
