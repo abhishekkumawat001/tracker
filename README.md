@@ -12,7 +12,7 @@ A streamlined habit tracker for daily consistency.
 
 ## Screenshot
 
-![HabitQuest Tracker screenshot](docs/screenshot.png)
+![HabitQuest Tracker screenshot](image.png)
 
 ## Features
 
