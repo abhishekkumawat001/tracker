@@ -171,6 +171,52 @@ th, td { border-bottom: 1px solid #f2f2f0; }
 .section-title { font-size: 12.5px; font-weight: 500; color: #888; margin-bottom: 10px; }
 .tips-box { margin-top: 18px; padding: 12px 14px; background: #f5f5f0; border-radius: 8px; font-size: 12px; color: #999; line-height: 1.7; }
 
+/* Welcome Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,20,15,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+.modal-card { background: white; border-radius: 20px; max-width: 460px; width: 100%; padding: 28px 28px 22px; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.2); animation: modalIn 0.22s ease; }
+@keyframes modalIn { from { opacity:0; transform:translateY(20px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+.modal-close { position: absolute; top: 14px; right: 15px; background: none; border: none; font-size: 22px; color: #ccc; cursor: pointer; line-height: 1; padding: 3px 7px; border-radius: 6px; font-family: inherit; }
+.modal-close:hover { background: #f5f5f0; color: #888; }
+.modal-icon { font-size: 30px; margin-bottom: 10px; }
+.modal-pill { display: inline-block; font-size: 10px; font-weight: 600; background: #e8f5f0; color: #1D9E75; border-radius: 20px; padding: 2px 10px; letter-spacing: 0.5px; margin-bottom: 12px; }
+.modal-quote-text { font-size: 16.5px; font-weight: 400; line-height: 1.65; color: #1a1a18; font-style: italic; margin-bottom: 6px; }
+.modal-quote-author { font-size: 11.5px; color: #bbb; margin-bottom: 18px; }
+.modal-divider { height: 1px; background: #f0f0ea; margin-bottom: 16px; }
+.modal-tip-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #1D9E75; margin-bottom: 7px; }
+.modal-tip-text { font-size: 13px; color: #555; line-height: 1.65; margin-bottom: 12px; }
+.modal-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.modal-chip { font-size: 11px; background: #f5f5f0; border: 1px solid #e8e8e3; color: #666; padding: 3px 10px; border-radius: 20px; }
+.modal-chip.focus { background: #e8f5f0; border-color: #b7e4cf; color: #1D9E75; font-weight: 500; }
+.modal-begin-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1D9E75, #0F6E56); color: white; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; letter-spacing: 0.3px; transition: opacity 0.15s; }
+.modal-begin-btn:hover { opacity: 0.9; }
+.modal-skip-btn { background: none; border: none; font-size: 11.5px; color: #ccc; cursor: pointer; font-family: inherit; display: block; margin: 9px auto 0; transition: color 0.15s; }
+.modal-skip-btn:hover { color: #999; }
+
+/* My Quotes section */
+.quotes-section { margin-top: 16px; background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; }
+.quotes-section-title { font-size: 13px; font-weight: 500; color: #444; margin-bottom: 3px; }
+.quotes-section-sub { font-size: 11.5px; color: #bbb; margin-bottom: 14px; line-height: 1.5; }
+.q-add-ta { width: 100%; padding: 8px 12px; border: 1px solid #e0e0da; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; color: #1a1a18; resize: none; transition: border-color 0.15s; line-height: 1.5; margin-bottom: 7px; }
+.q-add-ta:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+.q-meta-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.q-author-input { flex: 1; min-width: 110px; padding: 7px 12px; border: 1px solid #e0e0da; border-radius: 7px; font-size: 12.5px; outline: none; font-family: inherit; color: #666; transition: border-color 0.15s; }
+.q-author-input:focus { border-color: #1D9E75; }
+.q-freq-select { padding: 7px 10px; border: 1px solid #e0e0da; border-radius: 7px; font-size: 12.5px; outline: none; font-family: inherit; color: #555; background: white; cursor: pointer; }
+.q-add-btn { padding: 7px 16px; border-radius: 8px; border: none; background: #1D9E75; color: white; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; transition: background 0.15s; }
+.q-add-btn:hover { background: #0F6E56; }
+.uq-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 9px; background: #fafaf8; border: 1px solid #f0f0ea; margin-bottom: 7px; }
+.uq-body { flex: 1; min-width: 0; }
+.uq-text { font-size: 13px; color: #333; font-style: italic; line-height: 1.55; margin-bottom: 5px; }
+.uq-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.uq-author { font-size: 11px; color: #bbb; }
+.freq-pill { font-size: 9.5px; padding: 2px 8px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; }
+.freq-pill:hover { opacity: 0.75; }
+.fp-every  { background: #FFF3E0; color: #E65100; }
+.fp-daily  { background: #E3F2FD; color: #1565C0; }
+.fp-random { background: #F3E5F5; color: #6A1B9A; }
+.uq-del { background: none; border: none; color: #e24b4a; font-size: 18px; cursor: pointer; opacity: 0.5; flex-shrink: 0; padding: 0 2px; line-height: 1; font-family: inherit; transition: opacity 0.15s; }
+.uq-del:hover { opacity: 1; }
+
 .footer { text-align: center; font-size: 11px; color: #ccc; margin-top: 28px; line-height: 1.8; }
 
 @media (max-width: 700px) {
@@ -284,6 +330,14 @@ function App() {
   const [reflectMood, setReflectMood] = useState(() => reflections[todayKey]?.mood || 3);
   const [reflectSaved, setReflectSaved] = useState(false);
 
+  // User quotes + welcome modal
+  const [userQuotes, setUserQuotes] = useState(() => loadLS("ht_user_quotes", []));
+  const [showModal, setShowModal] = useState(false);
+  const [welcomeQuote, setWelcomeQuote] = useState(null);
+  const [newQText, setNewQText] = useState("");
+  const [newQAuthor, setNewQAuthor] = useState("");
+  const [newQFreq, setNewQFreq] = useState("daily");
+
   // Chart refs
   const chartRef = useRef(null);
   const chartInst = useRef(null);
@@ -299,6 +353,21 @@ function App() {
   useEffect(() => { try { localStorage.setItem("ht_habits", JSON.stringify(habits)); } catch {} }, [habits]);
   useEffect(() => { try { localStorage.setItem("ht_completions", JSON.stringify(completions)); } catch {} }, [completions]);
   useEffect(() => { try { localStorage.setItem("ht_reflections", JSON.stringify(reflections)); } catch {} }, [reflections]);
+  useEffect(() => { try { localStorage.setItem("ht_user_quotes", JSON.stringify(userQuotes)); } catch {} }, [userQuotes]);
+
+  // Show welcome modal once per day
+  useEffect(() => {
+    const today2 = fmtDateKey(new Date());
+    if (loadLS("ht_greeted", null) === today2) return;
+    const pool = QUOTES.map(q => ({...q, isUser: false}));
+    userQuotes.forEach(q => {
+      if (q.freq === "every_visit") pool.push({...q, isUser: true});
+      else if (q.freq === "daily" && q.lastShown !== today2) pool.push({...q, isUser: true});
+      else if (q.freq === "random" && Math.random() > 0.5) pool.push({...q, isUser: true});
+    });
+    setWelcomeQuote(pool[Math.floor(Math.random() * pool.length)]);
+    setShowModal(true);
+  }, []);
 
   const isChecked = (hid, d) => !!(completions[mkey]?.[hid]?.[d]);
   const toggle = (hid, d) => setCompletions(prev => {
@@ -479,6 +548,26 @@ function App() {
     setTimeout(() => setReflectSaved(false), 2500);
   };
 
+  const closeModal = () => {
+    const today2 = fmtDateKey(new Date());
+    localStorage.setItem("ht_greeted", today2);
+    if (welcomeQuote?.isUser) {
+      setUserQuotes(p => p.map(q => q.id === welcomeQuote.id ? {...q, lastShown: today2} : q));
+    }
+    setShowModal(false);
+  };
+
+  const addUserQuote = () => {
+    if (!newQText.trim()) return;
+    setUserQuotes(p => [...p, { id:"uq"+Date.now(), text:newQText.trim(), author:newQAuthor.trim()||"My Quote", freq:newQFreq, lastShown:null }]);
+    setNewQText(""); setNewQAuthor("");
+  };
+  const deleteUserQuote = id => setUserQuotes(p => p.filter(q => q.id !== id));
+  const cycleFreq = id => {
+    const order = ["every_visit","daily","random"];
+    setUserQuotes(p => p.map(q => q.id===id ? {...q, freq: order[(order.indexOf(q.freq)+1)%order.length]} : q));
+  };
+
   const exportCSV = () => {
     const hdr = ["Habit",...Array.from({length:days},(_,i)=>`Day ${i+1}`),"Total","Streak"];
     const rows = habits.map(h => {
@@ -498,6 +587,43 @@ function App() {
 
   return (
     <div className="app">
+      {/* Welcome Modal */}
+      {showModal && welcomeQuote && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-card" onClick={e=>e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>×</button>
+            <div className="modal-icon">🌿</div>
+            <div className="modal-pill">{welcomeQuote.tag || (welcomeQuote.isUser ? "My Quote" : "Kaizen")}</div>
+            <div className="modal-quote-text">"{welcomeQuote.text}"</div>
+            <div className="modal-quote-author">— {welcomeQuote.author}</div>
+            <div className="modal-divider"></div>
+            <div className="modal-tip-title">🌱 Kaizen Wisdom for Today</div>
+            {habits.length === 0 && (
+              <div className="modal-tip-text">Begin with a single habit. The Kaizen way starts with the smallest possible step — not a perfect plan.</div>
+            )}
+            {habits.length >= 1 && habits.length <= 3 && (
+              <div className="modal-tip-text">You have <strong>{habits.length}</strong> habit{habits.length>1?"s":""} — a strong foundation. Master these before adding more. Depth beats breadth.</div>
+            )}
+            {habits.length >= 4 && habits.length <= 7 && (
+              <div className="modal-tip-text">You're tracking <strong>{habits.length}</strong> habits. Shoshin: try focusing your energy on <strong>1–3 habits</strong> today. Full attention compounds faster than divided effort.</div>
+            )}
+            {habits.length > 7 && (
+              <div className="modal-tip-text">You have <strong>{habits.length}</strong> habits — ambitious! Kaizen wisdom: pick <strong>1–3</strong> to truly focus on today. Small, consistent wins outlast scattered effort.</div>
+            )}
+            {habits.length > 0 && (
+              <div className="modal-chips">
+                {habits.slice(0,3).map((h,i)=>(
+                  <span key={h.id} className={`modal-chip${i===0?" focus":""}`}>{i===0?"→ ":""}{h.name}</span>
+                ))}
+                {habits.length > 3 && <span className="modal-chip">+{habits.length-3} more</span>}
+              </div>
+            )}
+            <button className="modal-begin-btn" onClick={closeModal}>Begin Today →</button>
+            <button className="modal-skip-btn" onClick={closeModal}>remind me tomorrow</button>
+          </div>
+        </div>
+      )}
+
       <h1 className="sr-only">Kaizen Habit Tracker</h1>
 
       {/* Brand */}
@@ -797,6 +923,64 @@ function App() {
         {pastReflects.length===0 && !reflections[todayKey] && (
           <div className="empty-state">No reflections yet. Begin today — observation is the first step.</div>
         )}
+
+        {/* My Quotes manager */}
+        <div className="quotes-section">
+          <div className="quotes-section-title">🌸 My Quotes</div>
+          <div className="quotes-section-sub">
+            Add personal quotes that inspire you. They'll appear in your daily welcome card alongside the built-in philosophy quotes.
+          </div>
+
+          <textarea className="q-add-ta" rows={2} value={newQText} onChange={e=>setNewQText(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&(e.preventDefault(),addUserQuote())}
+            placeholder="Enter a quote that motivates you..." maxLength={220} />
+
+          <div className="q-meta-row">
+            <input className="q-author-input" value={newQAuthor} onChange={e=>setNewQAuthor(e.target.value)}
+              placeholder="Author (optional)" maxLength={60} />
+            <select className="q-freq-select" value={newQFreq} onChange={e=>setNewQFreq(e.target.value)}>
+              <option value="every_visit">🔔 Every visit</option>
+              <option value="daily">📅 Once a day</option>
+              <option value="random">🎲 Surprise me</option>
+            </select>
+            <button className="q-add-btn" onClick={addUserQuote}>+ Add</button>
+          </div>
+
+          {userQuotes.length === 0 ? (
+            <div style={{textAlign:"center",color:"#ddd",fontSize:12.5,padding:"10px 0 4px"}}>
+              No quotes saved yet.
+            </div>
+          ) : (
+            userQuotes.map(q => {
+              const FREQ_MAP = {
+                every_visit: ["🔔","Every visit","fp-every"],
+                daily:       ["📅","Once a day", "fp-daily"],
+                random:      ["🎲","Surprise me","fp-random"]
+              };
+              const [icon,label,cls] = FREQ_MAP[q.freq] || FREQ_MAP.daily;
+              return (
+                <div key={q.id} className="uq-item">
+                  <div className="uq-body">
+                    <div className="uq-text">"{q.text}"</div>
+                    <div className="uq-meta">
+                      <span className="uq-author">— {q.author}</span>
+                      <button className={`freq-pill ${cls}`} onClick={()=>cycleFreq(q.id)} title="Click to change frequency">
+                        {icon} {label}
+                      </button>
+                    </div>
+                  </div>
+                  <button className="uq-del" onClick={()=>deleteUserQuote(q.id)} title="Remove">×</button>
+                </div>
+              );
+            })
+          )}
+
+          {userQuotes.length > 0 && (
+            <div style={{fontSize:11,color:"#ccc",marginTop:6,lineHeight:1.6}}>
+              Tap the frequency badge to cycle: 🔔 Every visit → 📅 Once a day → 🎲 Surprise me
+            </div>
+          )}
+        </div>
       </>)}
 
       {/* ─── HABITS ─── */}
