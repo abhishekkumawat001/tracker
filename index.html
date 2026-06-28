@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script
-  data-goatcounter="https://abhishekkumawat001.goatcounter.com/count"
-  async
-  src="https://gc.zgo.at/count.js">
-</script>
+<script data-goatcounter="https://abhishekkumawat001.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Habit Tracker</title>
@@ -14,489 +10,890 @@
 <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F3F2EC; color: #1a1a18; min-height: 100vh; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-  .app { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
-  .page-title { font-size: 26px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-  .page-title-icon { font-size: 28px; }
+.app { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
 
-  .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-  .month-nav { display: flex; align-items: center; gap: 10px; }
-  .month-title { font-size: 20px; font-weight: 500; min-width: 190px; text-align: center; }
-  .nav-btn { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 5px 14px; cursor: pointer; font-size: 18px; color: #444; transition: background 0.15s; }
-  .nav-btn:hover { background: #eee; }
-  .tabs { display: flex; gap: 6px; }
-  .tab { padding: 7px 16px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 13px; color: #666; font-family: inherit; transition: all 0.15s; }
-  .tab.active { background: #e8f5f0; border-color: #1D9E75; color: #1D9E75; font-weight: 500; }
+/* Brand */
+.brand { margin-bottom: 18px; }
+.brand-title { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
+.brand-kanji { font-size: 13px; color: #1D9E75; font-weight: 400; letter-spacing: 3px; border: 1px solid #b7e4cf; border-radius: 4px; padding: 1px 6px; }
+.brand-subtitle { font-size: 11.5px; color: #aaa; margin-top: 4px; letter-spacing: 0.3px; }
 
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-  .stat-card { background: white; border-radius: 12px; padding: 14px 16px; border: 1px solid #ececec; }
-  .stat-label { font-size: 11px; color: #999; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .stat-val { font-size: 24px; font-weight: 500; }
-  .progress-bar-wrap { height: 5px; background: #eee; border-radius: 3px; margin-top: 8px; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #1D9E75, #5DCAA5); border-radius: 3px; transition: width 0.4s ease; }
+/* Quote card */
+.quote-card { background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%); border-radius: 12px; padding: 14px 20px; margin-bottom: 16px; color: white; position: relative; overflow: hidden; }
+.quote-card::before { content: '\201C'; position: absolute; top: -12px; left: 14px; font-size: 90px; opacity: 0.1; font-family: Georgia, serif; line-height: 1; pointer-events: none; }
+.quote-text { font-size: 13px; line-height: 1.65; font-style: italic; margin-bottom: 7px; position: relative; }
+.quote-meta { font-size: 11px; opacity: 0.8; display: flex; justify-content: space-between; align-items: center; }
+.quote-tag { background: rgba(255,255,255,0.18); border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 500; }
 
-  .grid-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #e8e8e8; background: white; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  table { border-collapse: collapse; width: max-content; min-width: 100%; }
-  th, td { border-bottom: 1px solid #f2f2f2; }
-  .habit-col { width: 155px; min-width: 155px; position: sticky; left: 0; z-index: 2; }
-  .head-habit-col { background: #fbfbfa; }
-  .body-habit-col-even { background: white; }
-  .body-habit-col-odd { background: #fafaf8; }
-  .stat-row-habit-col { background: #f8f8f5; }
-  .day-th { width: 33px; min-width: 33px; text-align: center; padding: 6px 2px 5px; vertical-align: bottom; }
-  .today-th { background: #f0faf6 !important; }
-  .day-head { font-size: 9px; color: #bbb; line-height: 1.3; }
-  .day-num { font-size: 12px; color: #555; font-weight: 400; }
-  .today-num { color: #1D9E75; font-weight: 700; }
-  .habit-name-cell { padding: 7px 10px; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 155px; display: flex; align-items: center; gap: 5px; }
-  .streak-badge { display: inline-block; font-size: 9px; background: #e8f5f0; color: #0F6E56; padding: 1px 5px; border-radius: 10px; flex-shrink: 0; }
-  .day-td { width: 33px; text-align: center; padding: 5px 2px; }
-  .today-td { background: rgba(29,158,117,0.05); }
-  .week-start { border-left: 2px solid #e5f5ee; }
-  .check-box { width: 20px; height: 20px; margin: 0 auto; border-radius: 4px; border: 1.5px solid #d0d0d0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; user-select: none; }
-  .check-box.checked { background: #1D9E75; border-color: #1D9E75; }
-  .check-box:hover:not(.checked) { border-color: #1D9E75; background: #f0faf6; }
-  .check-tick { color: white; font-size: 13px; line-height: 1; }
-  .stat-row-label { padding: 5px 10px; font-size: 10px; font-weight: 600; color: #888; }
-  .stat-row-cell { font-size: 10px; text-align: center; padding: 4px 2px; }
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.month-nav { display: flex; align-items: center; gap: 10px; }
+.month-title { font-size: 18px; font-weight: 500; min-width: 175px; text-align: center; }
+.nav-btn { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 5px 14px; cursor: pointer; font-size: 18px; color: #444; transition: background 0.15s; }
+.nav-btn:hover { background: #eee; }
+.tabs { display: flex; gap: 5px; flex-wrap: wrap; }
+.tab { padding: 7px 14px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 12.5px; color: #666; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.tab.active { background: #e8f5f0; border-color: #1D9E75; color: #1D9E75; font-weight: 500; }
 
-  .chart-section { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; margin-bottom: 16px; }
-  .chart-title { font-size: 12px; color: #999; margin-bottom: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.stat-card { background: white; border-radius: 12px; padding: 14px 16px; border: 1px solid #ececec; }
+.stat-label { font-size: 10.5px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-val { font-size: 22px; font-weight: 600; }
+.stat-sub { font-size: 10.5px; color: #ccc; margin-top: 3px; }
+.progress-bar-wrap { height: 4px; background: #eee; border-radius: 3px; margin-top: 8px; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #1D9E75, #52B788); border-radius: 3px; transition: width 0.4s ease; }
+.kaizen-card { background: linear-gradient(135deg, #edf8f3 0%, #f5fdf9 100%); border-color: #c3e8d6; }
 
-  .habits-manage { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; }
-  .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  .add-input { flex: 1; padding: 9px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; color: #1a1a18; transition: border-color 0.15s; }
-  .add-input:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
-  .add-btn { padding: 9px 18px; border-radius: 8px; border: none; background: #1D9E75; color: white; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; transition: background 0.15s; }
-  .add-btn:hover { background: #0F6E56; }
-  .habit-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #fafaf8; border-radius: 8px; margin-bottom: 7px; border: 1px solid #f0f0f0; }
-  .habit-item.dragging { opacity: 0.6; transform: scale(0.995); border: 1px dashed #d0d0d0; }
-  .habit-item-left { display: flex; align-items: center; gap: 10px; }
-  .habit-idx { font-size: 11px; color: #bbb; min-width: 22px; font-weight: 500; }
-  .habit-item-name { font-size: 13.5px; }
-  .del-btn { background: none; border: none; cursor: pointer; color: #e24b4a; font-size: 20px; padding: 0 4px; line-height: 1; opacity: 0.7; transition: opacity 0.15s; font-family: inherit; }
-  .del-btn:hover { opacity: 1; }
-  .edit-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 15px; padding: 0 4px; line-height: 1; opacity: 0.55; transition: opacity 0.15s; font-family: inherit; }
-  .edit-btn:hover { opacity: 1; color: #1D9E75; }
-  .habit-edit-input { flex: 1; padding: 3px 8px; border: 1.5px solid #1D9E75; border-radius: 6px; font-size: 13.5px; font-family: inherit; color: #1a1a18; outline: none; background: white; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
-  .save-btn { background: #1D9E75; border: none; border-radius: 6px; color: white; font-size: 12px; font-family: inherit; padding: 3px 10px; cursor: pointer; font-weight: 500; transition: background 0.15s; }
-  .save-btn:hover { background: #0F6E56; }
-  .cancel-btn { background: none; border: 1px solid #ddd; border-radius: 6px; color: #888; font-size: 12px; font-family: inherit; padding: 3px 8px; cursor: pointer; transition: all 0.15s; }
-  .cancel-btn:hover { border-color: #bbb; color: #555; }
-  .empty-state { text-align: center; color: #bbb; padding: 2.5rem; font-size: 14px; }
+/* Grid/Tracker */
+.grid-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #e8e8e3; background: white; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+table { border-collapse: collapse; width: max-content; min-width: 100%; }
+th, td { border-bottom: 1px solid #f2f2f0; }
+.habit-col { width: 162px; min-width: 162px; position: sticky; left: 0; z-index: 2; }
+.head-habit-col { background: #fbfbf8; }
+.body-habit-col-even { background: white; }
+.body-habit-col-odd { background: #fafaf6; }
+.stat-row-habit-col { background: #f8f8f4; }
+.day-th { width: 33px; min-width: 33px; text-align: center; padding: 6px 2px 5px; vertical-align: bottom; }
+.today-th { background: #f0faf5 !important; }
+.day-head { font-size: 9px; color: #ccc; line-height: 1.3; }
+.day-num { font-size: 12px; color: #666; font-weight: 400; }
+.today-num { color: #1D9E75; font-weight: 700; }
+.habit-name-cell { padding: 7px 10px; font-size: 12.5px; white-space: nowrap; max-width: 162px; display: flex; align-items: center; gap: 5px; }
+.ikigai-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.streak-badge { display: inline-flex; align-items: center; font-size: 9px; padding: 1px 5px; border-radius: 10px; flex-shrink: 0; }
+.streak-fire { background: #fff3e0; color: #b45309; }
+.streak-bloom { background: #e8f5e9; color: #1D9E75; }
+.day-td { width: 33px; text-align: center; padding: 5px 2px; }
+.today-td { background: rgba(29,158,117,0.04) !important; }
+.week-start { border-left: 2px solid #ecf7f2; }
+.check-box { width: 22px; height: 22px; margin: 0 auto; border-radius: 5px; border: 1.5px solid #d5d5d0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; user-select: none; }
+.check-box.checked { background: #1D9E75; border-color: #1D9E75; }
+.check-box:hover:not(.checked) { border-color: #1D9E75; background: #f0faf6; }
+.check-tick { color: white; font-size: 13px; line-height: 1; }
+.stat-row-label { padding: 5px 10px; font-size: 10px; font-weight: 600; color: #999; }
+.stat-row-cell { font-size: 10px; text-align: center; padding: 4px 2px; }
 
-  .footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 24px; }
+/* Chart section */
+.chart-section { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; margin-bottom: 14px; }
+.chart-title { font-size: 11px; color: #bbb; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
 
-  @media (max-width: 540px) {
-    .month-title { font-size: 16px; min-width: 150px; }
-    .stat-val { font-size: 20px; }
-    .stats-grid { gap: 8px; }
-    .stat-card { padding: 10px 12px; }
-  }
+/* Heatmap */
+.heatmap-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; max-width: 420px; }
+.heatmap-day-label { font-size: 9.5px; color: #ccc; text-align: center; padding-bottom: 3px; }
+.heatmap-cell { border-radius: 5px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: default; transition: transform 0.1s; }
+.heatmap-cell:hover { transform: scale(1.12); }
+.heatmap-legend { display: flex; gap: 12px; margin-top: 10px; align-items: center; }
+.heatmap-legend-item { display: flex; align-items: center; gap: 4px; }
+.heatmap-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* Insights */
+.insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.insight-card { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; }
+.insight-card-title { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: #bbb; font-weight: 600; margin-bottom: 12px; }
+.smart-insights { display: flex; flex-direction: column; gap: 9px; }
+.smart-insight-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; background: #fafaf6; border: 1px solid #f0f0ea; }
+.insight-icon { font-size: 16px; line-height: 1.2; flex-shrink: 0; }
+.insight-text { font-size: 12.5px; line-height: 1.55; color: #444; }
+.insight-tag { font-size: 10px; color: #1D9E75; font-weight: 500; margin-top: 3px; }
+.habit-perf-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.habit-perf-name { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+.habit-perf-track { width: 110px; height: 8px; background: #f0f0ea; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+.habit-perf-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.habit-perf-pct { font-size: 11px; color: #aaa; min-width: 28px; text-align: right; }
+.dow-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.dow-label { font-size: 11px; color: #aaa; width: 26px; text-align: right; flex-shrink: 0; }
+.dow-bar-track { flex: 1; height: 14px; background: #f5f5f0; border-radius: 7px; overflow: hidden; }
+.dow-bar-fill { height: 100%; border-radius: 7px; transition: width 0.5s ease; }
+.dow-bar-pct { font-size: 10px; color: #ccc; min-width: 28px; text-align: right; }
+
+/* Reflect tab */
+.reflect-form { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 18px; margin-bottom: 14px; }
+.reflect-date-hdr { font-size: 13.5px; font-weight: 500; color: #444; margin-bottom: 4px; }
+.reflect-sub { font-size: 11.5px; color: #bbb; margin-bottom: 14px; }
+.mood-row { display: flex; gap: 7px; margin-bottom: 12px; }
+.mood-btn { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent; background: #f5f5f0; cursor: pointer; font-size: 19px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.mood-btn.sel { border-color: #1D9E75; background: #e8f5f0; transform: scale(1.12); }
+.reflect-ta { width: 100%; min-height: 88px; padding: 10px 14px; border: 1px solid #e0e0da; border-radius: 8px; font-size: 13px; font-family: inherit; color: #1a1a18; outline: none; resize: vertical; line-height: 1.65; transition: border-color 0.15s; }
+.reflect-ta:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+.reflect-save-btn { margin-top: 10px; padding: 8px 20px; border-radius: 8px; border: none; background: #1D9E75; color: white; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; transition: background 0.15s; }
+.reflect-save-btn:hover { background: #0F6E56; }
+.reflect-ok { display: inline-block; margin-left: 10px; font-size: 12px; color: #1D9E75; }
+.today-summary { margin-top: 12px; padding: 8px 12px; background: #f8f8f4; border-radius: 8px; font-size: 12px; color: #888; }
+.past-reflections { display: flex; flex-direction: column; gap: 9px; }
+.reflect-entry { background: white; border-radius: 10px; border: 1px solid #ececec; padding: 13px 16px; }
+.reflect-entry-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.reflect-entry-date { font-size: 11.5px; font-weight: 500; color: #999; }
+.reflect-entry-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+/* Habits tab */
+.habits-manage { background: white; border-radius: 12px; border: 1px solid #ececec; padding: 16px; }
+.add-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.add-input { flex: 1; padding: 9px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; color: #1a1a18; transition: border-color 0.15s; }
+.add-input:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+.add-btn { padding: 9px 18px; border-radius: 8px; border: none; background: #1D9E75; color: white; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; transition: background 0.15s; }
+.add-btn:hover { background: #0F6E56; }
+.meta-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.why-input { flex: 1; min-width: 130px; padding: 7px 12px; border: 1px solid #e0e0da; border-radius: 7px; font-size: 12.5px; outline: none; font-family: inherit; color: #666; transition: border-color 0.15s; }
+.why-input:focus { border-color: #1D9E75; }
+.meta-select { padding: 7px 10px; border: 1px solid #e0e0da; border-radius: 7px; font-size: 12.5px; outline: none; font-family: inherit; color: #555; background: white; cursor: pointer; }
+.meta-select:focus { border-color: #1D9E75; }
+.habit-item { display: flex; flex-direction: column; padding: 10px 14px; background: #fafaf8; border-radius: 10px; margin-bottom: 7px; border: 1px solid #f0f0ea; transition: box-shadow 0.15s; cursor: grab; }
+.habit-item:hover { box-shadow: 0 2px 7px rgba(0,0,0,0.05); }
+.habit-item.dragging { opacity: 0.5; border: 1px dashed #ccc; box-shadow: none; cursor: grabbing; }
+.habit-item-main { display: flex; align-items: center; justify-content: space-between; }
+.habit-item-left { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
+.habit-idx { font-size: 11px; color: #ccc; min-width: 20px; }
+.habit-item-name { font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.habit-badges { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.ik-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
+.diff-badge { font-size: 13px; }
+.habit-edit-input { flex: 1; padding: 3px 8px; border: 1.5px solid #1D9E75; border-radius: 6px; font-size: 13.5px; font-family: inherit; color: #1a1a18; outline: none; background: white; box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
+.save-btn { background: #1D9E75; border: none; border-radius: 6px; color: white; font-size: 12px; font-family: inherit; padding: 3px 10px; cursor: pointer; font-weight: 500; }
+.save-btn:hover { background: #0F6E56; }
+.cancel-btn { background: none; border: 1px solid #ddd; border-radius: 6px; color: #888; font-size: 12px; font-family: inherit; padding: 3px 8px; cursor: pointer; }
+.cancel-btn:hover { border-color: #bbb; }
+.edit-btn { background: none; border: none; cursor: pointer; color: #bbb; font-size: 15px; padding: 0 4px; line-height: 1; transition: all 0.15s; font-family: inherit; }
+.edit-btn:hover { color: #1D9E75; }
+.del-btn { background: none; border: none; cursor: pointer; color: #e24b4a; font-size: 20px; padding: 0 4px; line-height: 1; opacity: 0.6; transition: opacity 0.15s; font-family: inherit; }
+.del-btn:hover { opacity: 1; }
+.habit-detail { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0ea; }
+.habit-why { font-size: 11.5px; color: #999; font-style: italic; margin-bottom: 5px; }
+.habit-stat-row { display: flex; gap: 14px; }
+.habit-stat { font-size: 11px; color: #bbb; }
+.habit-stat strong { color: #666; }
+.edit-meta-row { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
+.empty-state { text-align: center; color: #ccc; padding: 2.5rem; font-size: 14px; }
+.section-title { font-size: 12.5px; font-weight: 500; color: #888; margin-bottom: 10px; }
+.tips-box { margin-top: 18px; padding: 12px 14px; background: #f5f5f0; border-radius: 8px; font-size: 12px; color: #999; line-height: 1.7; }
+
+.footer { text-align: center; font-size: 11px; color: #ccc; margin-top: 28px; line-height: 1.8; }
+
+@media (max-width: 700px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .insights-grid { grid-template-columns: 1fr; }
+  .month-title { font-size: 16px; min-width: 150px; }
+  .stat-val { font-size: 20px; }
+}
+@media (max-width: 500px) {
+  .tabs { gap: 4px; }
+  .tab { padding: 6px 10px; font-size: 11.5px; }
+  .stats-grid { gap: 8px; }
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS_SHORT = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+const DAYS_FULL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+const IKIGAI = {
+  health:      { label: "Health",      icon: "🏃", color: "#E8F5E9", text: "#2E7D32" },
+  growth:      { label: "Growth",      icon: "📚", color: "#E3F2FD", text: "#1565C0" },
+  purpose:     { label: "Purpose",     icon: "🎯", color: "#FFF3E0", text: "#E65100" },
+  mindfulness: { label: "Mindfulness", icon: "🌿", color: "#F3E5F5", text: "#6A1B9A" }
+};
+
+const DIFFICULTY = [null,
+  { label: "Beginner",  icon: "🌱" },
+  { label: "Growing",   icon: "🌿" },
+  { label: "Committed", icon: "🌳" },
+  { label: "Master",    icon: "⛰️" }
+];
+
+const MOODS = ["😔","😐","🙂","😊","🌟"];
+
+const QUOTES = [
+  { text: "Fall seven times, stand up eight.", author: "Japanese Proverb", tag: "Wabi-Sabi" },
+  { text: "Not how long, but how well you have lived is the main thing.", author: "Seneca", tag: "Ikigai" },
+  { text: "In the beginner's mind there are many possibilities; in the expert's mind there are few.", author: "Shunryu Suzuki", tag: "Shoshin" },
+  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma", tag: "Kaizen" },
+  { text: "The journey of a thousand miles begins with a single step.", author: "Lao Tzu", tag: "Kaizen" },
+  { text: "Find beauty in imperfection and accept the natural cycle of growth and decay.", author: "Wabi-Sabi", tag: "Wabi-Sabi" },
+  { text: "Do not hurry, do not rest. Even a snail will reach its goal.", author: "Goethe", tag: "Kaizen" },
+  { text: "One kind word can warm three winter months.", author: "Japanese Proverb", tag: "Wabi-Sabi" },
+  { text: "Better than a thousand hollow words is one word that brings peace.", author: "The Buddha", tag: "Shoshin" },
+  { text: "Your life purpose is the intersection of what you love, what you are good at, and what the world needs.", author: "Ikigai Philosophy", tag: "Ikigai" },
+  { text: "We are what we repeatedly do. Excellence, then, is not an act but a habit.", author: "Aristotle", tag: "Kaizen" },
+  { text: "Nature does not hurry, yet everything is accomplished.", author: "Lao Tzu", tag: "Shinrin-Yoku" },
+];
 
 const DEFAULT_HABITS = [
-  { id:"h1", name:"Wake up at 05:00" },
-  { id:"h2", name:"Gym" },
-  { id:"h3", name:"Stop Watching Porn" },
-  { id:"h4", name:"Reading / Learning" },
-  { id:"h5", name:"Budget Tracking" },
-  { id:"h6", name:"Project Work" },
-  { id:"h7", name:"No Alcohol" },
-  { id:"h8", name:"Social Media Detox" },
-  { id:"h9", name:"Goal Journaling" },
-  { id:"h10", name:"Cold Shower" }
+  { id:"h1",  name:"Wake up at 05:00",    ikigai:"health",      difficulty:2, why:"Start the day with intention" },
+  { id:"h2",  name:"Gym",                 ikigai:"health",      difficulty:3, why:"Build physical strength" },
+  { id:"h3",  name:"Meditation",          ikigai:"purpose",     difficulty:4, why:"Reclaim mental energy" },
+  { id:"h4",  name:"Reading / Learning",  ikigai:"growth",      difficulty:2, why:"Expand knowledge daily" },
+  { id:"h5",  name:"Budget Tracking",     ikigai:"purpose",     difficulty:1, why:"Financial mindfulness" },
+  { id:"h6",  name:"Project Work",        ikigai:"growth",      difficulty:3, why:"Build something meaningful" },
+  { id:"h7",  name:"No Alcohol",          ikigai:"health",      difficulty:4, why:"Clear mind and body" },
+  { id:"h8",  name:"Social Media Detox",  ikigai:"mindfulness", difficulty:3, why:"Protect attention and focus" },
+  { id:"h9",  name:"Goal Journaling",     ikigai:"purpose",     difficulty:2, why:"Reflect and align with Ikigai" },
+  { id:"h10", name:"Cold Shower",         ikigai:"health",      difficulty:3, why:"Build mental resilience" }
 ];
 
 function getDaysInMonth(y, m) { return new Date(y, m+1, 0).getDate(); }
 function getDow(y, m, d) { return new Date(y, m, d).getDay(); }
-
-function loadFromStorage(key, fallback) {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-  catch { return fallback; }
+function fmtDateKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+function loadLS(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
 }
 
 function App() {
   const today = new Date();
+  const todayKey = fmtDateKey(today);
+
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [tab, setTab] = useState("tracker");
-  const [habits, setHabits] = useState(() => loadFromStorage("ht_habits", DEFAULT_HABITS));
-  const [completions, setCompletions] = useState(() => loadFromStorage("ht_completions", {}));
+
+  const [habits, setHabits] = useState(() =>
+    loadLS("ht_habits", DEFAULT_HABITS).map(h => ({ difficulty:2, ikigai:"health", why:"", ...h }))
+  );
+  const [completions, setCompletions] = useState(() => loadLS("ht_completions", {}));
+  const [reflections, setReflections] = useState(() => loadLS("ht_reflections", {}));
+
+  // Add form
   const [newHabit, setNewHabit] = useState("");
+  const [newIkigai, setNewIkigai] = useState("health");
+  const [newDiff, setNewDiff] = useState(2);
+  const [newWhy, setNewWhy] = useState("");
+
+  // Edit form
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editIkigai, setEditIkigai] = useState("health");
+  const [editDiff, setEditDiff] = useState(2);
+  const [editWhy, setEditWhy] = useState("");
+
+  // Drag
+  const dragIdx = useRef(null);
+  const [draggingId, setDraggingId] = useState(null);
+
+  // Reflect
+  const [reflectText, setReflectText] = useState(() => reflections[todayKey]?.text || "");
+  const [reflectMood, setReflectMood] = useState(() => reflections[todayKey]?.mood || 3);
+  const [reflectSaved, setReflectSaved] = useState(false);
+
+  // Chart refs
   const chartRef = useRef(null);
   const chartInst = useRef(null);
-  const dragIndexRef = useRef(null);
-  const [draggingId, setDraggingId] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState("");
+  const dowChartRef = useRef(null);
+  const dowChartInst = useRef(null);
 
   const mkey = `${year}-${month}`;
   const days = getDaysInMonth(year, month);
   const todayDay = today.getFullYear()===year && today.getMonth()===month ? today.getDate() : -1;
+  const upToDay = todayDay > 0 ? todayDay : days;
 
+  // Persist
   useEffect(() => { try { localStorage.setItem("ht_habits", JSON.stringify(habits)); } catch {} }, [habits]);
   useEffect(() => { try { localStorage.setItem("ht_completions", JSON.stringify(completions)); } catch {} }, [completions]);
+  useEffect(() => { try { localStorage.setItem("ht_reflections", JSON.stringify(reflections)); } catch {} }, [reflections]);
 
   const isChecked = (hid, d) => !!(completions[mkey]?.[hid]?.[d]);
-
-  const toggle = (hid, d) => {
-    setCompletions(prev => {
-      const m = prev[mkey] || {};
-      const h = m[hid] || {};
-      return { ...prev, [mkey]: { ...m, [hid]: { ...h, [d]: !h[d] } } };
-    });
-  };
-
+  const toggle = (hid, d) => setCompletions(prev => {
+    const m = prev[mkey] || {};
+    const h = m[hid] || {};
+    return { ...prev, [mkey]: { ...m, [hid]: { ...h, [d]: !h[d] } } };
+  });
   const getDayDone = (d) => habits.filter(h => isChecked(h.id, d)).length;
   const getDayPct = (d) => habits.length ? Math.round((getDayDone(d)/habits.length)*100) : 0;
 
-  const totalCompleted = Object.values(completions[mkey]||{})
-    .reduce((s,ds) => s + Object.values(ds).filter(Boolean).length, 0);
-  const overallPct = habits.length
-    ? Math.round((totalCompleted/(habits.length*days))*100) : 0;
+  const totalCompleted = useMemo(() =>
+    Object.values(completions[mkey]||{}).reduce((s,ds) => s + Object.values(ds).filter(Boolean).length, 0),
+    [completions, mkey]
+  );
+  const overallPct = habits.length ? Math.round((totalCompleted/(habits.length*days))*100) : 0;
 
-  const getStreak = (hid) => {
-    let streak = 0;
+  // Wabi-Sabi streak: allows 1 grace day
+  const getStreakInfo = (hid) => {
+    let streak = 0, grace = false;
     const start = todayDay > 0 ? todayDay : days;
     for (let d = start; d >= 1; d--) {
-      if (isChecked(hid, d)) streak++; else break;
+      if (isChecked(hid, d)) { streak++; }
+      else if (!grace && streak > 0) { grace = true; }
+      else { break; }
     }
-    return streak;
+    return { streak, recovered: grace };
   };
 
-  // Chart
+  // Habit stats for current month
+  const habitStats = useMemo(() => habits.map(h => {
+    const done = Array.from({length:upToDay},(_,i) => isChecked(h.id,i+1) ? 1 : 0).reduce((a,b)=>a+b,0);
+    return { ...h, pct: Math.round((done/upToDay)*100) };
+  }).sort((a,b) => b.pct - a.pct), [completions, habits, year, month]);
+
+  // Day-of-week averages
+  const dowStats = useMemo(() => {
+    const totals = Array(7).fill(0), counts = Array(7).fill(0);
+    for (let d = 1; d <= upToDay; d++) {
+      const dow = getDow(year, month, d);
+      totals[dow] += getDayPct(d); counts[dow]++;
+    }
+    return totals.map((t,i) => counts[i] ? Math.round(t/counts[i]) : null);
+  }, [completions, habits, year, month]);
+
+  // Kaizen score
+  const kaizenScore = useMemo(() => {
+    if (!habits.length) return 0;
+    const base = overallPct * 0.55;
+    const streaks = habits.map(h => getStreakInfo(h.id).streak);
+    const streakBonus = Math.min(Math.max(...streaks) / 30, 1) * 25;
+    const refDays = Object.keys(reflections).filter(k => {
+      const d = new Date(k+"T00:00:00");
+      return d.getFullYear()===year && d.getMonth()===month;
+    }).length;
+    const refBonus = Math.min(refDays / upToDay, 1) * 20;
+    return Math.min(Math.round(base + streakBonus + refBonus), 100);
+  }, [overallPct, habits, completions, reflections, year, month]);
+
+  // Smart insights
+  const insights = useMemo(() => {
+    const ins = [];
+    const valid = dowStats.map((v,i)=>({v,i})).filter(x=>x.v!==null);
+    if (valid.length > 0) {
+      const best = valid.reduce((a,b)=>a.v>b.v?a:b);
+      ins.push({ icon:"🗓️", text:`Your strongest day is ${DAYS_FULL[best.i]} with ${best.v}% average completion.`, tag:"Kaizen" });
+      if (valid.length >= 3) {
+        const worst = valid.reduce((a,b)=>a.v<b.v?a:b);
+        if (worst.v < best.v - 25) {
+          ins.push({ icon:"🌊", text:`${DAYS_FULL[worst.i]} tends to be harder (${worst.v}%). Wabi-Sabi: plan for imperfection on this day.`, tag:"Wabi-Sabi" });
+        }
+      }
+    }
+    if (habitStats.length > 0 && habitStats[0].pct > 0)
+      ins.push({ icon:"🏆", text:`"${habitStats[0].name}" leads this month at ${habitStats[0].pct}%. This is your Ikigai anchor.`, tag:"Ikigai" });
+    const recovered = habits.filter(h => getStreakInfo(h.id).recovered);
+    if (recovered.length > 0)
+      ins.push({ icon:"🌸", text:`${recovered.length} habit${recovered.length>1?"s":""} show Wabi-Sabi resilience — the 🌸 streak continues through an imperfect day.`, tag:"Wabi-Sabi" });
+    const sl = habits.map(h=>({...h,...getStreakInfo(h.id)})).sort((a,b)=>b.streak-a.streak)[0];
+    if (sl && sl.streak >= 3)
+      ins.push({ icon:"🔥", text:`"${sl.name}" has a ${sl.streak}-day streak. Small daily actions compound into extraordinary results.`, tag:"Kaizen" });
+    if (!reflections[todayKey])
+      ins.push({ icon:"🍃", text:"You haven't reflected today. Take a moment to observe your patterns — Shinrin-Yoku begins with stillness.", tag:"Shinrin-Yoku" });
+    else
+      ins.push({ icon:"🍃", text:"Today's reflection is saved. Mindful observation is the foundation of lasting Kaizen.", tag:"Shinrin-Yoku" });
+    const weak = [...habitStats].reverse().find(h=>h.pct < 40);
+    if (weak)
+      ins.push({ icon:"🌱", text:`"${weak.name}" needs attention (${weak.pct}%). Shoshin: approach it with beginner's openness and reduce the difficulty if needed.`, tag:"Shoshin" });
+    return ins;
+  }, [habits, completions, reflections, dowStats, habitStats, todayKey]);
+
+  const quoteOfDay = QUOTES[today.getDate() % QUOTES.length];
+  const bestStreak = habits.length ? Math.max(0, ...habits.map(h => getStreakInfo(h.id).streak)) : 0;
+  const kaizenColor = kaizenScore >= 75 ? "#1D9E75" : kaizenScore >= 45 ? "#BA7517" : "#e24b4a";
+  const pctColor = p => p >= 80 ? "#1D9E75" : p >= 50 ? "#BA7517" : "#d0d0cc";
+  const isWeekStart = d => getDow(year,month,d)===0 && d>1;
+  const heatColor = p => p===0 ? "#f0f0ea" : p<25 ? "#c6e8d7" : p<55 ? "#74C69D" : p<80 ? "#3AA87C" : "#1D9E75";
+
+  // Tracker chart
   useEffect(() => {
     if (tab !== "tracker" || !chartRef.current) return;
     const labels = Array.from({length:days},(_,i)=>i+1);
     const data = labels.map(d => getDayPct(d));
     if (chartInst.current) { chartInst.current.destroy(); chartInst.current = null; }
     chartInst.current = new Chart(chartRef.current, {
-      type: "line",
-      data: {
-        labels,
-        datasets: [{
-          label: "Completion %",
-          data,
-          borderColor: "#1D9E75",
-          backgroundColor: "rgba(29,158,117,0.08)",
-          fill: true,
-          tension: 0.35,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          pointBackgroundColor: "#1D9E75",
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              title: (items) => `Day ${items[0].label}`,
-              label: (ctx) => ` ${ctx.parsed.y}% complete (${getDayDone(parseInt(ctx.label))}/${habits.length} habits)`
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: "rgba(0,0,0,0.04)" },
-            ticks: { font: { size: 10 }, maxTicksLimit: 16, color: "#999" }
-          },
-          y: {
-            min: 0, max: 100,
-            grid: { color: "rgba(0,0,0,0.04)" },
-            ticks: { font: { size: 10 }, callback: v => `${v}%`, color: "#999" }
-          }
+      type:"line",
+      data:{ labels, datasets:[{ data, borderColor:"#1D9E75", backgroundColor:"rgba(29,158,117,0.07)", fill:true, tension:0.35, pointRadius:3, pointHoverRadius:5, pointBackgroundColor:"#1D9E75", borderWidth:2 }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ title:i=>`Day ${i[0].label}`, label:c=>` ${c.parsed.y}% (${getDayDone(parseInt(c.label))}/${habits.length} habits)` } } },
+        scales:{
+          x:{ grid:{color:"rgba(0,0,0,0.04)"}, ticks:{font:{size:10},maxTicksLimit:16,color:"#ccc"} },
+          y:{ min:0, max:100, grid:{color:"rgba(0,0,0,0.04)"}, ticks:{font:{size:10},callback:v=>`${v}%`,color:"#ccc"} }
         }
       }
     });
     return () => { if (chartInst.current) { chartInst.current.destroy(); chartInst.current = null; } };
   }, [tab, completions, habits, year, month]);
 
-  const prevMonth = () => month===0 ? (setMonth(11), setYear(y=>y-1)) : setMonth(m=>m-1);
-  const nextMonth = () => month===11 ? (setMonth(0), setYear(y=>y+1)) : setMonth(m=>m+1);
+  // DoW chart
+  useEffect(() => {
+    if (tab !== "insights" || !dowChartRef.current) return;
+    const vals = dowStats.map(v => v===null ? 0 : v);
+    if (dowChartInst.current) { dowChartInst.current.destroy(); dowChartInst.current = null; }
+    dowChartInst.current = new Chart(dowChartRef.current, {
+      type:"bar",
+      data:{ labels:DAYS_SHORT, datasets:[{ data:vals, backgroundColor:vals.map(v=>v>=75?"rgba(29,158,117,0.75)":v>=45?"rgba(82,183,136,0.55)":"rgba(200,200,196,0.45)"), borderRadius:5, borderSkipped:false }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y}% avg`}} },
+        scales:{
+          x:{ grid:{display:false}, ticks:{font:{size:11},color:"#bbb"} },
+          y:{ min:0, max:100, grid:{color:"rgba(0,0,0,0.04)"}, ticks:{font:{size:10},callback:v=>`${v}%`,color:"#ccc"} }
+        }
+      }
+    });
+    return () => { if (dowChartInst.current) { dowChartInst.current.destroy(); dowChartInst.current = null; } };
+  }, [tab, dowStats]);
 
+  // Navigation
+  const prevMonth = () => month===0 ? (setMonth(11),setYear(y=>y-1)) : setMonth(m=>m-1);
+  const nextMonth = () => month===11 ? (setMonth(0),setYear(y=>y+1)) : setMonth(m=>m+1);
+
+  // Habit CRUD
   const addHabit = () => {
     if (!newHabit.trim()) return;
-    setHabits(prev => [...prev, { id:"h"+Date.now(), name: newHabit.trim() }]);
-    setNewHabit("");
+    setHabits(p => [...p, { id:"h"+Date.now(), name:newHabit.trim(), ikigai:newIkigai, difficulty:newDiff, why:newWhy.trim() }]);
+    setNewHabit(""); setNewWhy("");
   };
-
-  const removeHabit = (id) => {
-    if (window.confirm("Remove this habit? Your past data for it will be kept.")) {
-      setHabits(prev => prev.filter(h => h.id !== id));
-    }
+  const removeHabit = id => {
+    if (window.confirm("Remove this habit? Your past data will be kept."))
+      setHabits(p => p.filter(h => h.id!==id));
   };
-
-  const startEdit = (h) => { setEditingId(h.id); setEditingName(h.name); };
-  const cancelEdit = () => { setEditingId(null); setEditingName(""); };
+  const startEdit = h => { setEditingId(h.id); setEditName(h.name); setEditIkigai(h.ikigai||"health"); setEditDiff(h.difficulty||2); setEditWhy(h.why||""); };
+  const cancelEdit = () => { setEditingId(null); setEditName(""); };
   const saveEdit = () => {
-    if (!editingName.trim()) { cancelEdit(); return; }
-    setHabits(prev => prev.map(h => h.id === editingId ? { ...h, name: editingName.trim() } : h));
-    setEditingId(null);
-    setEditingName("");
+    if (!editName.trim()) { cancelEdit(); return; }
+    setHabits(p => p.map(h => h.id===editingId ? {...h,name:editName.trim(),ikigai:editIkigai,difficulty:editDiff,why:editWhy.trim()} : h));
+    cancelEdit();
   };
 
-  const handleDragStart = (e, idx, id) => {
-    dragIndexRef.current = idx;
-    try { e.dataTransfer.effectAllowed = 'move'; } catch (err) {}
-    setDraggingId(id);
-  };
-
-  const handleDragOver = (e, idx) => {
+  // Drag
+  const onDragStart = (e,i,id) => { dragIdx.current=i; try{e.dataTransfer.effectAllowed='move';}catch{}; setDraggingId(id); };
+  const onDragOver = (e,i) => { e.preventDefault(); try{e.dataTransfer.dropEffect='move';}catch{}; };
+  const onDrop = (e,i) => {
     e.preventDefault();
-    try { e.dataTransfer.dropEffect = 'move'; } catch (err) {}
+    const from = dragIdx.current;
+    if (from===null||from===i) { setDraggingId(null); dragIdx.current=null; return; }
+    setHabits(p => { const n=p.slice(); const [item]=n.splice(from,1); n.splice(i,0,item); return n; });
+    setDraggingId(null); dragIdx.current=null;
   };
+  const onDragEnd = () => { setDraggingId(null); dragIdx.current=null; };
 
-  const handleDrop = (e, idx) => {
-    e.preventDefault();
-    const from = dragIndexRef.current;
-    const to = idx;
-    if (from === null || from === undefined) { setDraggingId(null); return; }
-    if (from === to) { setDraggingId(null); dragIndexRef.current = null; return; }
-    setHabits(prev => {
-      const next = prev.slice();
-      const [item] = next.splice(from, 1);
-      next.splice(to, 0, item);
-      return next;
-    });
-    setDraggingId(null);
-    dragIndexRef.current = null;
+  // Reflection
+  const saveReflect = () => {
+    if (!reflectText.trim()) return;
+    setReflections(p => ({...p, [todayKey]:{text:reflectText.trim(),mood:reflectMood}}));
+    setReflectSaved(true);
+    setTimeout(() => setReflectSaved(false), 2500);
   };
-
-  const handleDragEnd = () => { setDraggingId(null); dragIndexRef.current = null; };
-
-  const pctColor = (pct) => pct >= 80 ? "#1D9E75" : pct >= 50 ? "#BA7517" : "#ccc";
-  const isWeekStart = (d) => getDow(year, month, d) === 0 && d > 1;
 
   const exportCSV = () => {
-    const header = ["Habit", ...Array.from({length:days},(_,i)=>`Day ${i+1}`), "Total", "Streak"];
+    const hdr = ["Habit",...Array.from({length:days},(_,i)=>`Day ${i+1}`),"Total","Streak"];
     const rows = habits.map(h => {
-      const dayValues = Array.from({length:days},(_,i)=>isChecked(h.id,i+1)?1:0);
-      const total = dayValues.reduce((a,b)=>a+b,0);
-      return [h.name, ...dayValues, total, getStreak(h.id)];
+      const days2 = Array.from({length:days},(_,i)=>isChecked(h.id,i+1)?1:0);
+      return [h.name,...days2,days2.reduce((a,b)=>a+b,0),getStreakInfo(h.id).streak];
     });
-    const csv = [header, ...rows].map(r => r.join(",")).join("\n");
-    const blob = new Blob([csv], {type:"text/csv"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `habits-${MONTHS[month]}-${year}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const csv=[hdr,...rows].map(r=>r.join(",")).join("\n");
+    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download=`kaizen-${MONTHS[month]}-${year}.csv`; a.click();
   };
+
+  const pastReflects = useMemo(() =>
+    Object.entries(reflections).filter(([k])=>k!==todayKey).sort(([a],[b])=>b.localeCompare(a)).slice(0,14)
+      .map(([k,v]) => ({key:k, date:new Date(k+"T00:00:00"), ...v})),
+    [reflections, todayKey]
+  );
 
   return (
     <div className="app">
-      <h1 className="sr-only">Habit Tracker</h1>
-      <div className="page-title">
-        <span className="page-title-icon">📋</span>
-        Habit Tracker
+      <h1 className="sr-only">Kaizen Habit Tracker</h1>
+
+      {/* Brand */}
+      <div className="brand">
+        <div className="brand-title">🌿 Kaizen Habit <span className="brand-kanji">改善</span></div>
+        <div className="brand-subtitle">Continuous improvement · One habit at a time</div>
       </div>
 
+      {/* Quote */}
+      <div className="quote-card">
+        <div className="quote-text">"{quoteOfDay.text}"</div>
+        <div className="quote-meta">
+          <span>— {quoteOfDay.author}</span>
+          <span className="quote-tag">{quoteOfDay.tag}</span>
+        </div>
+      </div>
+
+      {/* Header */}
       <div className="header">
         <div className="month-nav">
-          <button className="nav-btn" onClick={prevMonth} title="Previous month">‹</button>
+          <button className="nav-btn" onClick={prevMonth}>‹</button>
           <div className="month-title">{MONTHS[month]} {year}</div>
-          <button className="nav-btn" onClick={nextMonth} title="Next month">›</button>
+          <button className="nav-btn" onClick={nextMonth}>›</button>
         </div>
         <div className="tabs">
           <button className={`tab${tab==="tracker"?" active":""}`} onClick={()=>setTab("tracker")}>📊 Tracker</button>
-          <button className={`tab${tab==="habits"?" active":""}`} onClick={()=>setTab("habits")}>⚙️ Habits</button>
+          <button className={`tab${tab==="insights"?" active":""}`} onClick={()=>setTab("insights")}>📈 Insights</button>
+          <button className={`tab${tab==="reflect"?" active":""}`} onClick={()=>setTab("reflect")}>📔 Reflect</button>
+          <button className={`tab${tab==="habits"?" active":""}`} onClick={()=>setTab("habits")}>🌱 Habits</button>
         </div>
       </div>
 
+      {/* Stats bar */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-label">Number of habits</div>
+          <div className="stat-label">Habits</div>
           <div className="stat-val">{habits.length}</div>
+          <div className="stat-sub">active routines</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Completed this month</div>
+          <div className="stat-label">Completed</div>
           <div className="stat-val">{totalCompleted}</div>
+          <div className="stat-sub">this month</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Monthly progress</div>
+          <div className="stat-label">Monthly Progress</div>
           <div className="stat-val">{overallPct}%</div>
-          <div className="progress-bar-wrap">
-            <div className="progress-bar-fill" style={{width:`${overallPct}%`}}></div>
-          </div>
+          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:`${overallPct}%`}}></div></div>
+        </div>
+        <div className="stat-card kaizen-card">
+          <div className="stat-label">Kaizen Score</div>
+          <div className="stat-val" style={{color:kaizenColor}}>{kaizenScore}</div>
+          <div className="stat-sub">best streak: {bestStreak}d</div>
         </div>
       </div>
 
-      {tab === "tracker" ? (
-        <>
-          <div className="grid-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th className="habit-col head-habit-col" style={{padding:"8px 10px",textAlign:"left",fontSize:11,color:"#aaa",fontWeight:600,letterSpacing:"0.4px",textTransform:"uppercase",borderBottom:"2px solid #efefef"}}>Habits</th>
-                  {Array.from({length:days},(_,i)=>i+1).map(d=>(
-                    <th key={d} className={`day-th${d===todayDay?" today-th":""}${isWeekStart(d)?" week-start":""}`} style={{background:d===todayDay?"#f0faf6":"#fbfbfa",borderBottom:"2px solid #efefef"}}>
-                      <div className="day-head">{DAYS_SHORT[getDow(year,month,d)]}</div>
-                      <div className={`day-num${d===todayDay?" today-num":""}`}>{d}</div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {habits.map((h,hi)=>{
-                  const streak = getStreak(h.id);
-                  const isEven = hi%2===0;
-                  return (
-                    <tr key={h.id}>
-                      <td className={`habit-col ${isEven?"body-habit-col-even":"body-habit-col-odd"}`}>
-                        <div className="habit-name-cell">
-                          <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</span>
-                          {streak >= 2 && <span className="streak-badge">🔥{streak}</span>}
-                        </div>
-                      </td>
-                      {Array.from({length:days},(_,i)=>i+1).map(d=>{
-                        const chk = isChecked(h.id,d);
-                        return (
-                          <td key={d} className={`day-td${d===todayDay?" today-td":""}${isWeekStart(d)?" week-start":""}`} style={{background:d===todayDay?"rgba(29,158,117,0.05)":isEven?"white":"#fafaf8"}}>
-                            <div className={`check-box${chk?" checked":""}`} onClick={()=>toggle(h.id,d)} role="checkbox" aria-checked={chk} aria-label={`${h.name} day ${d}`}>
-                              {chk && <span className="check-tick">✓</span>}
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
+      {/* ─── TRACKER ─── */}
+      {tab === "tracker" && (<>
+        <div className="grid-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th className="habit-col head-habit-col" style={{padding:"8px 10px",textAlign:"left",fontSize:10.5,color:"#bbb",fontWeight:600,letterSpacing:"0.5px",textTransform:"uppercase",borderBottom:"2px solid #efefea"}}>Habits</th>
+                {Array.from({length:days},(_,i)=>i+1).map(d=>(
+                  <th key={d} className={`day-th${d===todayDay?" today-th":""}${isWeekStart(d)?" week-start":""}`} style={{background:d===todayDay?"#f0faf5":"#fbfbf8",borderBottom:"2px solid #efefea"}}>
+                    <div className="day-head">{DAYS_SHORT[getDow(year,month,d)]}</div>
+                    <div className={`day-num${d===todayDay?" today-num":""}`}>{d}</div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {habits.map((h,hi)=>{
+                const {streak, recovered} = getStreakInfo(h.id);
+                const isEven = hi%2===0;
+                const ik = IKIGAI[h.ikigai];
+                return (
+                  <tr key={h.id}>
+                    <td className={`habit-col ${isEven?"body-habit-col-even":"body-habit-col-odd"}`}>
+                      <div className="habit-name-cell">
+                        {ik && <div className="ikigai-dot" style={{background:ik.text,opacity:0.45}}></div>}
+                        <span style={{overflow:"hidden",textOverflow:"ellipsis",flex:1}}>{h.name}</span>
+                        {streak >= 2 && (
+                          <span className={`streak-badge ${recovered?"streak-bloom":"streak-fire"}`}>
+                            {recovered?"🌸":"🔥"}{streak}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    {Array.from({length:days},(_,i)=>i+1).map(d=>{
+                      const chk = isChecked(h.id,d);
+                      return (
+                        <td key={d} className={`day-td${d===todayDay?" today-td":""}${isWeekStart(d)?" week-start":""}`}
+                          style={{background:d===todayDay?"rgba(29,158,117,0.04)":isEven?"white":"#fafaf6"}}>
+                          <div className={`check-box${chk?" checked":""}`} onClick={()=>toggle(h.id,d)} role="checkbox" aria-checked={chk} aria-label={`${h.name} day ${d}`}>
+                            {chk && <span className="check-tick">✓</span>}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+              <tr style={{borderTop:"2px solid #eeeee8"}}>
+                <td className="habit-col stat-row-label stat-row-habit-col">Progress %</td>
+                {Array.from({length:days},(_,i)=>i+1).map(d=>{
+                  const p=getDayPct(d);
+                  return <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#f8f8f4",color:pctColor(p),fontWeight:p>=80?600:400}}>{getDayDone(d)>0?`${p}%`:""}</td>;
                 })}
-                <tr style={{borderTop:"2px solid #eee"}}>
-                  <td className="habit-col stat-row-label stat-row-habit-col">Progress %</td>
-                  {Array.from({length:days},(_,i)=>i+1).map(d=>{
-                    const pct=getDayPct(d);
-                    return (
-                      <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#f8f8f5",color:pctColor(pct),fontWeight:pct>=80?600:400}}>
-                        {getDayDone(d)>0?`${pct}%`:""}
-                      </td>
-                    );
-                  })}
-                </tr>
-                <tr>
-                  <td className="habit-col stat-row-label" style={{background:"#fafaf8"}}>Done</td>
-                  {Array.from({length:days},(_,i)=>i+1).map(d=>{
-                    const done = getDayDone(d);
-                    return (
-                      <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#fafaf8",color:"#1D9E75",fontWeight:done>0?500:400}}>
-                        {done||""}
-                      </td>
-                    );
-                  })}
-                </tr>
-                <tr>
-                  <td className="habit-col stat-row-label stat-row-habit-col">Not done</td>
-                  {Array.from({length:days},(_,i)=>i+1).map(d=>{
-                    const nd = habits.length - getDayDone(d);
-                    return (
-                      <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#f8f8f5",color:nd>0?"#e24b4a":"#ccc"}}>
-                        {nd>0&&getDayDone(d)>0?nd:nd===habits.length?"":""}
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-            </table>
+              </tr>
+              <tr>
+                <td className="habit-col stat-row-label" style={{background:"#fafaf6"}}>Done</td>
+                {Array.from({length:days},(_,i)=>i+1).map(d=>{
+                  const done=getDayDone(d);
+                  return <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#fafaf6",color:"#1D9E75",fontWeight:done>0?500:400}}>{done||""}</td>;
+                })}
+              </tr>
+              <tr>
+                <td className="habit-col stat-row-label stat-row-habit-col">Not done</td>
+                {Array.from({length:days},(_,i)=>i+1).map(d=>{
+                  const nd=habits.length-getDayDone(d);
+                  return <td key={d} className={`stat-row-cell${isWeekStart(d)?" week-start":""}`} style={{background:"#f8f8f4",color:nd>0?"#e24b4a":"#ddd"}}>{nd>0&&getDayDone(d)>0?nd:nd===habits.length?"":""}</td>;
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="chart-section">
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div className="chart-title">Daily Completion Trend — {MONTHS[month]} {year}</div>
+            <button onClick={exportCSV} style={{background:"none",border:"1px solid #e0e0da",borderRadius:8,padding:"5px 12px",cursor:"pointer",fontSize:12,color:"#888",fontFamily:"inherit"}}>⬇ Export CSV</button>
+          </div>
+          <div style={{position:"relative",height:155}}>
+            <canvas ref={chartRef}></canvas>
+          </div>
+        </div>
+
+        <div className="chart-section">
+          <div className="chart-title">Completion Heatmap — {MONTHS[month]} {year}</div>
+          <div className="heatmap-grid">
+            {DAYS_SHORT.map(d=><div key={d} className="heatmap-day-label">{d}</div>)}
+            {Array.from({length:getDow(year,month,1)}).map((_,i)=><div key={"p"+i}></div>)}
+            {Array.from({length:days},(_,i)=>i+1).map(d=>{
+              const p=getDayPct(d), future=todayDay>0&&d>todayDay;
+              return (
+                <div key={d} className="heatmap-cell" title={`Day ${d}: ${p}%`}
+                  style={{background:future?"#f5f5f0":heatColor(p)}}>
+                  <span style={{fontSize:9,color:p>=55&&!future?"rgba(255,255,255,0.85)":"#ccc"}}>{d}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="heatmap-legend">
+            {[["#f0f0ea","0%"],["#c6e8d7","<25%"],["#74C69D","<55%"],["#3AA87C","<80%"],["#1D9E75","80%+"]].map(([c,l])=>(
+              <div key={l} className="heatmap-legend-item">
+                <div className="heatmap-legend-dot" style={{background:c}}></div>
+                <span style={{fontSize:9.5,color:"#ccc"}}>{l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>)}
+
+      {/* ─── INSIGHTS ─── */}
+      {tab === "insights" && (<>
+        <div className="chart-section">
+          <div className="chart-title">Kaizen Insights</div>
+          <div className="smart-insights">
+            {insights.map((ins,i)=>(
+              <div key={i} className="smart-insight-item">
+                <span className="insight-icon">{ins.icon}</span>
+                <div>
+                  <div className="insight-text">{ins.text}</div>
+                  <div className="insight-tag">{ins.tag}</div>
+                </div>
+              </div>
+            ))}
+            {insights.length===0 && <div className="empty-state" style={{padding:"1.5rem"}}>Start tracking to unlock insights.</div>}
+          </div>
+        </div>
+
+        <div className="insights-grid">
+          <div className="insight-card">
+            <div className="insight-card-title">Consistency by Day of Week</div>
+            <div style={{position:"relative",height:155}}>
+              <canvas ref={dowChartRef}></canvas>
+            </div>
           </div>
 
-          <div className="chart-section">
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <div className="chart-title">Daily completion — {MONTHS[month]} {year}</div>
-              <button onClick={exportCSV} style={{background:"none",border:"1px solid #ddd",borderRadius:8,padding:"5px 12px",cursor:"pointer",fontSize:12,color:"#666",fontFamily:"inherit"}}>⬇ Export CSV</button>
-            </div>
-            <div style={{position:"relative",height:170}}>
-              <canvas ref={chartRef} role="img" aria-label={`Habit completion rate chart for ${MONTHS[month]} ${year}`}></canvas>
+          <div className="insight-card">
+            <div className="insight-card-title">Habit Performance — {MONTHS[month]}</div>
+            {habitStats.slice(0,8).map(h=>{
+              const ik=IKIGAI[h.ikigai];
+              return (
+                <div key={h.id} className="habit-perf-row">
+                  <div className="habit-perf-name" title={h.name}>{h.name}</div>
+                  <div className="habit-perf-track">
+                    <div className="habit-perf-fill" style={{width:`${h.pct}%`,background:ik?ik.text:"#1D9E75"}}></div>
+                  </div>
+                  <div className="habit-perf-pct">{h.pct}%</div>
+                </div>
+              );
+            })}
+            {habitStats.length===0 && <div style={{color:"#ddd",fontSize:12}}>No data yet.</div>}
+          </div>
+
+          <div className="insight-card">
+            <div className="insight-card-title">Ikigai Balance</div>
+            {Object.entries(IKIGAI).map(([key,ik])=>{
+              const cats=habits.filter(h=>h.ikigai===key);
+              const avg=cats.length ? Math.round(cats.map(h=>habitStats.find(s=>s.id===h.id)?.pct||0).reduce((a,b)=>a+b,0)/cats.length) : 0;
+              return (
+                <div key={key} style={{marginBottom:10}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                    <span style={{fontSize:12}}>{ik.icon} {ik.label}</span>
+                    <span style={{fontSize:11,color:"#bbb"}}>{cats.length} habits · {avg}%</span>
+                  </div>
+                  <div style={{height:6,background:"#f0f0ea",borderRadius:3,overflow:"hidden"}}>
+                    <div style={{height:"100%",width:`${avg}%`,background:ik.text,opacity:0.65,borderRadius:3,transition:"width 0.5s"}}></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="insight-card">
+            <div className="insight-card-title">Streak Leaderboard</div>
+            {habits.map(h=>({...h,...getStreakInfo(h.id)})).sort((a,b)=>b.streak-a.streak).slice(0,7).map((h,i)=>(
+              <div key={h.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7}}>
+                <div style={{fontSize:10.5,color:"#ddd",minWidth:14,textAlign:"right"}}>{i+1}</div>
+                <div style={{flex:1,fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</div>
+                {h.streak>0
+                  ? <span style={{fontSize:10.5,fontWeight:600,color:h.recovered?"#1D9E75":"#B45309",background:h.recovered?"#e8f5e9":"#fff3e8",padding:"1px 6px",borderRadius:10}}>
+                      {h.recovered?"🌸":"🔥"}{h.streak}d
+                    </span>
+                  : <span style={{fontSize:11,color:"#e0e0e0"}}>—</span>
+                }
+              </div>
+            ))}
+            {habits.length===0 && <div style={{color:"#ddd",fontSize:12}}>No habits yet.</div>}
+          </div>
+        </div>
+      </>)}
+
+      {/* ─── REFLECT ─── */}
+      {tab === "reflect" && (<>
+        <div className="reflect-form">
+          <div className="reflect-date-hdr">
+            {today.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}
+          </div>
+          <div className="reflect-sub">Shinrin-Yoku · Observe your patterns with calm curiosity</div>
+
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:11.5,color:"#bbb",marginBottom:7}}>How are you feeling?</div>
+            <div className="mood-row">
+              {MOODS.map((m,i)=>(
+                <button key={i} className={`mood-btn${reflectMood===i+1?" sel":""}`} onClick={()=>setReflectMood(i+1)}
+                  title={["Very low","Low","Neutral","Good","Excellent"][i]}>{m}</button>
+              ))}
             </div>
           </div>
-        </>
-      ) : (
+
+          <textarea className="reflect-ta" value={reflectText} onChange={e=>setReflectText(e.target.value)}
+            placeholder="What went well today? What challenged you? What small improvement will you carry into tomorrow?" />
+
+          <div style={{display:"flex",alignItems:"center"}}>
+            <button className="reflect-save-btn" onClick={saveReflect}>Save Reflection</button>
+            {reflectSaved && <span className="reflect-ok">✓ Saved</span>}
+          </div>
+
+          {todayDay > 0 && (
+            <div className="today-summary">
+              Today: <strong style={{color:"#1D9E75"}}>{getDayDone(todayDay)}/{habits.length}</strong> habits completed
+              {getDayPct(todayDay)>=80?" 🌟 Exceptional!":getDayPct(todayDay)>=50?" 🌿 Good progress.":getDayPct(todayDay)>0?" 🌱 Every step counts.":habits.length>0?" — Begin with one habit.":""}
+            </div>
+          )}
+        </div>
+
+        {pastReflects.length > 0 && (<>
+          <div className="section-title">📜 Recent Reflections</div>
+          <div className="past-reflections">
+            {pastReflects.map(r=>(
+              <div key={r.key} className="reflect-entry">
+                <div className="reflect-entry-hdr">
+                  <div className="reflect-entry-date">
+                    {r.date.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
+                  </div>
+                  <span style={{fontSize:18}}>{MOODS[r.mood-1]}</span>
+                </div>
+                <div className="reflect-entry-text">{r.text}</div>
+              </div>
+            ))}
+          </div>
+        </>)}
+
+        {pastReflects.length===0 && !reflections[todayKey] && (
+          <div className="empty-state">No reflections yet. Begin today — observation is the first step.</div>
+        )}
+      </>)}
+
+      {/* ─── HABITS ─── */}
+      {tab === "habits" && (
         <div className="habits-manage">
-          <div style={{marginBottom:16}}>
-            <div style={{fontSize:14,fontWeight:500,marginBottom:4}}>Your habits ({habits.length})</div>
-            <div style={{fontSize:12,color:"#999"}}>Add or remove habits. Your data is saved automatically in your browser.</div>
+          <div style={{marginBottom:14}}>
+            <div style={{fontSize:14,fontWeight:500,marginBottom:3}}>Your Habits ({habits.length})</div>
+            <div style={{fontSize:12,color:"#bbb"}}>Connect each habit to a purpose. Drag to reorder.</div>
           </div>
+
           <div className="add-row">
-            <input
-              className="add-input"
-              value={newHabit}
-              onChange={e=>setNewHabit(e.target.value)}
-              onKeyDown={e=>e.key==="Enter"&&addHabit()}
-              placeholder="New habit name (e.g. Meditate, Run 5km, Read 30min)..."
-              maxLength={60}
-            />
+            <input className="add-input" value={newHabit} onChange={e=>setNewHabit(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&addHabit()} placeholder="New habit name..." maxLength={60} />
             <button className="add-btn" onClick={addHabit}>+ Add</button>
           </div>
-          {habits.length === 0 && (
-            <div className="empty-state">No habits yet. Add your first habit above!</div>
-          )}
+          <div className="meta-row">
+            <input className="why-input" value={newWhy} onChange={e=>setNewWhy(e.target.value)}
+              placeholder="Why this habit? (your purpose)" maxLength={80} />
+            <select className="meta-select" value={newIkigai} onChange={e=>setNewIkigai(e.target.value)}>
+              {Object.entries(IKIGAI).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}
+            </select>
+            <select className="meta-select" value={newDiff} onChange={e=>setNewDiff(Number(e.target.value))}>
+              {[1,2,3,4].map(d=><option key={d} value={d}>{DIFFICULTY[d].icon} {DIFFICULTY[d].label}</option>)}
+            </select>
+          </div>
+
+          {habits.length===0 && <div className="empty-state">No habits yet. Add your first above!</div>}
+
           {habits.map((h,i)=>{
-            const isEditing = editingId === h.id;
+            const isEditing = editingId===h.id;
+            const ik=IKIGAI[h.ikigai], diff=DIFFICULTY[h.difficulty||2];
+            const hStat=habitStats.find(s=>s.id===h.id);
+            const {streak}=getStreakInfo(h.id);
             return (
-              <div
-                key={h.id}
-                className={`habit-item${draggingId===h.id?" dragging":""}`}
+              <div key={h.id} className={`habit-item${draggingId===h.id?" dragging":""}`}
                 draggable={!isEditing}
-                onDragStart={!isEditing?(e)=>handleDragStart(e,i,h.id):undefined}
-                onDragOver={!isEditing?(e)=>handleDragOver(e,i):undefined}
-                onDrop={!isEditing?(e)=>handleDrop(e,i):undefined}
-                onDragEnd={!isEditing?handleDragEnd:undefined}
-                aria-grabbed={draggingId===h.id}
-              >
-                <div className="habit-item-left" style={{flex:1,minWidth:0}}>
-                  <span className="habit-idx">#{i+1}</span>
-                  {isEditing ? (
-                    <input
-                      className="habit-edit-input"
-                      value={editingName}
-                      onChange={e=>setEditingName(e.target.value)}
-                      onKeyDown={e=>{ if(e.key==="Enter") saveEdit(); if(e.key==="Escape") cancelEdit(); }}
-                      autoFocus
-                      maxLength={60}
-                    />
-                  ) : (
-                    <span className="habit-item-name" style={{flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</span>
-                  )}
+                onDragStart={!isEditing?e=>onDragStart(e,i,h.id):undefined}
+                onDragOver={!isEditing?e=>onDragOver(e,i):undefined}
+                onDrop={!isEditing?e=>onDrop(e,i):undefined}
+                onDragEnd={!isEditing?onDragEnd:undefined}>
+                <div className="habit-item-main">
+                  <div className="habit-item-left">
+                    <span className="habit-idx">#{i+1}</span>
+                    {isEditing
+                      ? <input className="habit-edit-input" value={editName} onChange={e=>setEditName(e.target.value)}
+                          onKeyDown={e=>{if(e.key==="Enter")saveEdit();if(e.key==="Escape")cancelEdit();}} autoFocus maxLength={60} />
+                      : <span className="habit-item-name">{h.name}</span>
+                    }
+                  </div>
+                  <div className="habit-badges">
+                    {!isEditing && ik && <span className="ik-badge" style={{background:ik.color,color:ik.text}}>{ik.icon} {ik.label}</span>}
+                    {!isEditing && diff && <span className="diff-badge" title={diff.label}>{diff.icon}</span>}
+                    {isEditing
+                      ? <><button className="save-btn" onClick={saveEdit}>Save</button><button className="cancel-btn" onClick={cancelEdit}>Cancel</button></>
+                      : <><button className="edit-btn" onClick={()=>startEdit(h)} title="Edit">✏</button><button className="del-btn" onClick={()=>removeHabit(h.id)} title="Remove">×</button></>
+                    }
+                  </div>
                 </div>
-                <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
-                  {isEditing ? (
-                    <>
-                      <button className="save-btn" onClick={saveEdit}>Save</button>
-                      <button className="cancel-btn" onClick={cancelEdit}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <button className="edit-btn" onClick={()=>startEdit(h)} title="Rename habit">✏</button>
-                      <button className="del-btn" onClick={()=>removeHabit(h.id)} title="Remove habit">×</button>
-                    </>
-                  )}
-                </div>
+
+                {isEditing && (
+                  <div className="edit-meta-row">
+                    <input className="why-input" value={editWhy} onChange={e=>setEditWhy(e.target.value)} placeholder="Why this habit?" maxLength={80} />
+                    <select className="meta-select" value={editIkigai} onChange={e=>setEditIkigai(e.target.value)}>
+                      {Object.entries(IKIGAI).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}
+                    </select>
+                    <select className="meta-select" value={editDiff} onChange={e=>setEditDiff(Number(e.target.value))}>
+                      {[1,2,3,4].map(d=><option key={d} value={d}>{DIFFICULTY[d].icon} {DIFFICULTY[d].label}</option>)}
+                    </select>
+                  </div>
+                )}
+
+                {!isEditing && (h.why||hStat) && (
+                  <div className="habit-detail">
+                    {h.why && <div className="habit-why">"{h.why}"</div>}
+                    <div className="habit-stat-row">
+                      <div className="habit-stat"><strong>{hStat?.pct||0}%</strong> this month</div>
+                      <div className="habit-stat"><strong>{streak}</strong>d streak</div>
+                      {diff && <div className="habit-stat">{diff.icon} {diff.label}</div>}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
-          <div style={{marginTop:20,padding:"12px 14px",background:"#f8f8f5",borderRadius:8,fontSize:12,color:"#888",lineHeight:1.6}}>
-            💡 <strong>Tips:</strong> Keep habits specific and binary (done/not done).
-            Aim for 5–12 habits. Streak badges 🔥 appear when you complete a habit consecutively.
+
+          <div className="tips-box">
+            🌱 <strong>Shoshin:</strong> Start with Beginner habits and level up as consistency grows.<br/>
+            🔥 Streak after 2+ consecutive days · 🌸 Wabi-Sabi recovery streak (1 grace day allowed)<br/>
+            🎯 Connect each habit to Ikigai — routines with purpose outlast motivation.
           </div>
         </div>
       )}
 
-      <div className="footer">Habit Tracker — data stored locally in your browser · Built with React &amp; Chart.js</div>
+      <div className="footer">
+        Kaizen Habit 改善 · Data stored locally in your browser<br/>
+        Inspired by Kaizen · Ikigai · Wabi-Sabi · Shoshin · Shinrin-Yoku
+      </div>
     </div>
   );
 }
@@ -504,25 +901,9 @@ function App() {
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 
-<div style="
-  font-family: system-ui, sans-serif;
-  font-size: 20px;
-  color: #111;
-  margin-top: 20px;
-  text-align: center;
-">
+<div style="font-family:system-ui,sans-serif;font-size:20px;color:#111;margin-top:20px;text-align:center;">
   Total unique visitors:
-  <!-- 
-    This image directly requests your total count from GoatCounter.
-    For this image to render a number instead of breaking, you MUST enable 
-    "Allow public viewing of site statistics" in your GoatCounter Site Settings.
-  -->
-  <img
-    src="https://abhishekkumawat001.goatcounter.com/counter/TOTAL.svg"
-    alt="Visitor count"
-    style="height: 22px; vertical-align: middle; margin-left: 6px;"
-  />
+  <img src="https://abhishekkumawat001.goatcounter.com/counter/TOTAL.svg" alt="Visitor count" style="height:22px;vertical-align:middle;margin-left:6px;" />
 </div>
-
 </body>
 </html>
