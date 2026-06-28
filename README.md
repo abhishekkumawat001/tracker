@@ -12,11 +12,7 @@ A streamlined habit tracker for daily consistency.
 
 ## Screenshot
 
-> Add a screenshot of the app here for a stronger first impression.
->
-> Example:
->
-> `![HabitQuest Tracker screenshot](docs/screenshot.png)`
+![HabitQuest Tracker screenshot](docs/screenshot.png)
 
 ## Features
 
